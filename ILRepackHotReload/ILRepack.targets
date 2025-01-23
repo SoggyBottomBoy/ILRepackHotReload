@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  
+  <Target Name="ILRepacker" AfterTargets="Build">
+    <ItemGroup>
+      <!-- The main assembly needs to come first as assembly metadata is taken from the first assembly -->
+      <InputAssemblies Include="$(OutputPath)$(AssemblyName).dll" />
+      <InputAssemblies Include="$(OutputPath)\*.dll" Exclude="$(OutputPath)$(AssemblyName).dll" />
+      <OutputAssembly Include="$(OutputPath)$(AssemblyName).dll" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <DoNotInternalizeAssemblies Include="$(AssemblyName)" />
+    </ItemGroup>
+
+    <ILRepack
+      TargetKind="Dll"
+      DebugInfo="true"
+      Parallel="true"
+      AllowDuplicateResources="false"
+      Internalize="true"
+      InternalizeExclude="@(DoNotInternalizeAssemblies)"
+      InputAssemblies="@(InputAssemblies)"
+      OutputFile="@(OutputAssembly)" />
+  </Target>
+  
+</Project>
